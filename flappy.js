@@ -108,21 +108,44 @@ function Progress() {
 
 // const barriers = new Barriers(700, 1200, 200, 400);
 // const bird = new Bird(700);
-// const areaDoJogo = document.querySelector("[wm-flappy]");
-// areaDoJogo.appendChild(bird.element);
-// areaDoJogo.appendChild(new Progress().element);
-// barriers.pairs.forEach((pair) => areaDoJogo.appendChild(pair.element));
+// const gameArea = document.querySelector("[wm-flappy]");
+// gameArea.appendChild(bird.element);
+// gameArea.appendChild(new Progress().element);
+// barriers.pairs.forEach((pair) => gameArea.appendChild(pair.element));
 // setInterval(() => {
 //   barriers.animate();
 //   bird.animate();
 // }, 20);
 
+function areSuperimposed(elementA, elementB) {
+  const a = elementA.getBoundingClientRect();
+  const b = elementB.getBoundingClientRect();
+
+  const horizontal = a.left + a.width >= b.left && b.left + b.width >= a.left;
+  const vertical = a.top + a.height >= b.top && b.top + b.height >= a.top;
+  return horizontal && vertical;
+}
+
+function collided(bird, barriers) {
+  let collided = false;
+  barriers.pairs.forEach((pairOfBarriers) => {
+    if (!collided) {
+      const superior = pairOfBarriers.superior.element;
+      const inferior = pairOfBarriers.inferior.element;
+      collided =
+        areSuperimposed(bird.element, superior) ||
+        areSuperimposed(bird.element, inferior);
+    }
+  });
+  return collided;
+}
+
 function FlappyBird() {
   let points = 0;
 
-  const areaDoJogo = document.querySelector("[wm-flappy]");
-  const gameHeight = areaDoJogo.clientHeight;
-  const gameWidth = areaDoJogo.clientWidth;
+  const gameArea = document.querySelector("[wm-flappy]");
+  const gameHeight = gameArea.clientHeight;
+  const gameWidth = gameArea.clientWidth;
 
   const progress = new Progress();
   const barriers = new Barriers(gameHeight, gameWidth, 200, 400, () =>
@@ -130,15 +153,18 @@ function FlappyBird() {
   );
   const bird = new Bird(gameWidth);
 
-  areaDoJogo.appendChild(progress.element);
-  areaDoJogo.appendChild(bird.element);
-  barriers.pairs.forEach((pair) => areaDoJogo.appendChild(pair.element));
+  gameArea.appendChild(progress.element);
+  gameArea.appendChild(bird.element);
+  barriers.pairs.forEach((pair) => gameArea.appendChild(pair.element));
 
   this.start = () => {
-    //loop do jogo
     const timer = setInterval(() => {
       barriers.animate();
       bird.animate();
+
+      if (collided(bird, barriers)) {
+        clearInterval(timer);
+      }
     }, 20);
   };
 }
