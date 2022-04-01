@@ -77,4 +77,5 @@ body {
     right: 10px;
     font-family: 'Press Start 2P', cursive;
     font-size: 70px;
+    z-index: 100;
 }
