@@ -16,10 +16,6 @@ function Barrier(reverse = false) {
     (body.style.height = `${barrierHeight}px`);
 }
 
-// const b = new Barrier(true);
-// b.setBarrierHeight(200);
-// document.querySelector("[wm-flappy]").appendChild(b.element);
-
 function PairOfBarriers(barrierHeight, opening, x) {
   this.element = newElement("div", "pair-of-barriers");
 
@@ -44,6 +40,39 @@ function PairOfBarriers(barrierHeight, opening, x) {
   this.setX(x);
 }
 
-const b = new PairOfBarriers(700, 200, 800);
+// const b = new PairOfBarriers(700, 200, 800);
+// document.querySelector("[wm-flappy]").appendChild(b.element);
 
-document.querySelector("[wm-flappy]").appendChild(b.element);
+function Barriers(barrierHeight, barrierWidth, opening, space, notifyPoint) {
+  this.pairs = [
+    new PairOfBarriers(barrierHeight, opening, barrierWidth),
+    new PairOfBarriers(barrierHeight, opening, barrierWidth + space),
+    new PairOfBarriers(barrierHeight, opening, barrierWidth + space * 2),
+    new PairOfBarriers(barrierHeight, opening, barrierWidth + space * 3),
+  ];
+
+  const displacement = 3;
+  this.animate = () => {
+    this.pairs.forEach((pair) => {
+      pair.setX(pair.getX() - displacement);
+
+      //quando o elemento sair da área do jogo
+      if (pair.getX() < -pair.getWidth()) {
+        pair.setX(pair.getX() + space * this.pairs.length);
+        pair.drawOpening();
+      }
+
+      const middle = barrierWidth / 2;
+      const crossedTheMiddle =
+        pair.getX() + displacement >= middle && pair.getX() < middle;
+      if (crossedTheMiddle) notifyPoint();
+    });
+  };
+}
+
+const barriers = new Barriers(700, 1200, 200, 400);
+const areaDoJogo = document.querySelector("[wm-flappy]");
+barriers.pairs.forEach((pair) => areaDoJogo.appendChild(pair.element));
+setInterval(() => {
+  barriers.animate();
+}, 20);
