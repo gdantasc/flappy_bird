@@ -70,9 +70,41 @@ function Barriers(barrierHeight, barrierWidth, opening, space, notifyPoint) {
   };
 }
 
+function Bird(gameHeight) {
+  let flying = false;
+
+  this.element = newElement("img", "bird");
+  this.element.src = "assets/passaro.png";
+
+  this.getY = () => parseInt(this.element.style.bottom.split("px")[0]);
+  this.setY = (y) => (this.element.style.bottom = `${y}px`);
+
+  window.onkeydown = (e) => (flying = true);
+  window.onkeyup = (e) => (flying = false);
+
+  this.animate = () => {
+    const newY = this.getY() + (flying ? 8 : -5);
+    const maxHeight = gameHeight - this.element.clientHeight;
+
+    if (newY <= 0) {
+      this.setY(0);
+    } else if (newY >= maxHeight) {
+      this.setY(maxHeight);
+    } else {
+      this.setY(newY);
+    }
+  };
+
+  this.setY(gameHeight / 2);
+}
+
 const barriers = new Barriers(700, 1200, 200, 400);
+const bird = new Bird(700);
 const areaDoJogo = document.querySelector("[wm-flappy]");
+
+areaDoJogo.appendChild(bird.element);
 barriers.pairs.forEach((pair) => areaDoJogo.appendChild(pair.element));
 setInterval(() => {
   barriers.animate();
+  bird.animate();
 }, 20);
