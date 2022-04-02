@@ -40,9 +40,6 @@ function PairOfBarriers(barrierHeight, opening, x) {
   this.setX(x);
 }
 
-// const b = new PairOfBarriers(700, 200, 800);
-// document.querySelector("[wm-flappy]").appendChild(b.element);
-
 function Barriers(barrierHeight, barrierWidth, opening, space, notifyPoint) {
   this.pairs = [
     new PairOfBarriers(barrierHeight, opening, barrierWidth),
@@ -105,17 +102,6 @@ function Progress() {
   };
   this.updatePoints(0);
 }
-
-// const barriers = new Barriers(700, 1200, 200, 400);
-// const bird = new Bird(700);
-// const gameArea = document.querySelector("[wm-flappy]");
-// gameArea.appendChild(bird.element);
-// gameArea.appendChild(new Progress().element);
-// barriers.pairs.forEach((pair) => gameArea.appendChild(pair.element));
-// setInterval(() => {
-//   barriers.animate();
-//   bird.animate();
-// }, 20);
 
 function areSuperimposed(elementA, elementB) {
   const a = elementA.getBoundingClientRect();
