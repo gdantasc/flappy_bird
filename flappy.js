@@ -126,6 +126,18 @@ function collided(bird, barriers) {
   return collided;
 }
 
+function setGameOver() {
+  const gameArea = document.querySelector("[wm-flappy]");
+  const gameOverMsg = newElement("div", "gameOver");
+  const newGameMsg = newElement("p", "gameOverP");
+
+  gameOverMsg.innerHTML = "GAME OVER";
+  newGameMsg.innerHTML = "Press any key to reload";
+
+  gameArea.appendChild(gameOverMsg);
+  gameArea.appendChild(newGameMsg);
+}
+
 function FlappyBird() {
   let points = 0;
 
@@ -150,6 +162,10 @@ function FlappyBird() {
 
       if (collided(bird, barriers)) {
         clearInterval(timer);
+        setGameOver();
+        setTimeout(() => {
+          window.onkeydown = (e) => location.reload();
+        }, 500);
       }
     }, 20);
   };
